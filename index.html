@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sof Smart Hire – Présentation</title>
+<link rel="icon" type="image/png" href="https://www.sofrecom.com/media/layout/img/cache/sofrecom-logo-footer-2024-360x9999.png"><style>
+  :root {
+    --blue: #054270;
+    --blue-mid: #0267ad;
+    --blue-light: #e8f0f8;
+    --blue-soft: #c8dcf0;
+    --orange: #f3701c;
+    --orange-light: #fef0e8;
+    --white: #ffffff;
+    --off: #f7f9fc;
+    --gray: #e2e8f0;
+    --text: #0d1f35;
+    --muted: #6b8199;
+    --dark: #030e18;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    font-family: 'Outfit', sans-serif;
+    background: #0a1628;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── DECK ── */
+  #deck {
+    width: 100vw; height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 64px 88px 80px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    transform: translateX(50px);
+    background: var(--white);
+  }
+  .slide.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+  .slide.exit-left { opacity: 0; transform: translateX(-50px); pointer-events: none; }
+  .slide.exit-right { opacity: 0; transform: translateX(50px); pointer-events: none; }
+
+  /* ── TOP BAR (all slides) ── */
+  .top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--gray);
+    background: var(--white);
+    z-index: 10;
+  }
+  .sofrecom-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  /* Sofrecom SVG Logo — same design as the app */
+  .logo-svg { width: 32px; height: 32px; }
+  .logo-wordmark {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+  .logo-wordmark .sof { font-size: 15px; font-weight: 800; color: var(--blue); letter-spacing: -0.3px; }
+  .logo-wordmark .smart { font-size: 10px; font-weight: 500; color: var(--orange); letter-spacing: 1.5px; text-transform: uppercase; }
+
+  .top-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .slide-counter {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 1px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .slide-counter span { color: var(--blue); }
+
+  /* ── NAV NUMBERED DOTS (bottom) ── */
+  #nav-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 52px;
+    background: var(--dark);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 999;
+  }
+  .nav-prev-btn, .nav-next-btn {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: white;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-prev-btn:hover, .nav-next-btn:hover {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+  .nav-prev-btn:disabled, .nav-next-btn:disabled {
+    opacity: 0.25; cursor: not-allowed;
+  }
+  #dots-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 8px;
+    flex: 1;
+    justify-content: center;
+  }
+  #dots-container::-webkit-scrollbar { display: none; }
+  .nav-dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    gap: 3px;
+    padding: 4px 5px;
+    border-radius: 6px;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .nav-dot:hover { background: rgba(255,255,255,0.06); }
+  .nav-dot .dot-num {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.28);
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+  .nav-dot .dot-pip {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    transition: all 0.3s ease;
+  }
+  .nav-dot.active .dot-pip {
+    background: var(--orange);
+    width: 18px;
+    border-radius: 3px;
+  }
+  .nav-dot.active .dot-num { color: var(--orange); }
+
+  /* ── SHARED HEADER ── */
+  .slide-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .slide-label::before {
+    content: '';
+    width: 20px; height: 2px;
+    background: var(--orange);
+    display: inline-block;
+  }
+  .slide-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(26px, 3vw, 40px);
+    font-weight: 800;
+    color: var(--blue);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .slide-title .hl { color: var(--orange); }
+  .underline-bar {
+    width: 40px; height: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--orange));
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+  .slide-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 580px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  /* ══════════════════════════════════════
+     SLIDE 1 – COVER (WHITE)
+  ══════════════════════════════════════ */
+  #slide-1 {
+    background: var(--white);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0;
+  }
+  #slide-1 .top-bar { background: var(--white); }
+
+  .cover-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Big Sofrecom logo for cover */
+  .cover-logo-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .cover-logo-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .cover-logo-svg { width: 52px; height: 52px; }
+  .cover-logo-name {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--blue);
+    letter-spacing: -0.5px;
+  }
+  .cover-logo-name b { color: var(--orange); font-weight: 900; }
+  .cover-logo-tagline {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .cover-divider {
+    width: 1px;
+    height: 48px;
+    background: var(--gray);
+    margin: 24px 0;
+  }
+
+  .cover-badge {
+    background: var(--blue-light);
+    border: 1px solid var(--blue-soft);
+    color: var(--blue);
+    padding: 5px 18px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .cover-title-main {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(44px, 6vw, 76px);
+    line-height: 1.02;
+    color: var(--blue);
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+  .cover-title-main em {
+    font-style: italic;
+    color: var(--orange);
+  }
+
+  .cover-sub {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto 32px;
+    font-weight: 400;
+  }
+
+  .cover-chips {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .chip {
+    background: var(--off);
+    border: 1px solid var(--gray);
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chip-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--orange);
+  }
+
+  /* decorative lines on cover */
+  .cover-deco {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .cover-deco::before {
+    content: '';
+    position: absolute;
+    right: -80px; top: 40px;
+    width: 420px; height: 420px;
+    border: 1px solid rgba(5,66,112,0.06);
+    border-radius: 50%;
+  }
+  .cover-deco::after {
+    content: '';
+    position: absolute;
+    left: -120px; bottom: 60px;
+    width: 340px; height: 340px;
+    border: 1px solid rgba(243,112,28,0.08);
+    border-radius: 50%;
+  }
+  .cover-line-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue) 0%, var(--orange) 100%);
+  }
+
+  /* Bottom info on cover */
+  .cover-bottom {
+    position: absolute;
+    bottom: 40px;
+    left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    font-size: 12px;
+    color: var(--muted);
+    z-index: 2;
+  }
+  .cover-bottom .sep { width: 1px; height: 14px; background: var(--gray); }
+  .cover-bottom strong { color: var(--blue); font-weight: 700; }
+
+  /* ══════════════════════════════════════
+     SLIDE 2 – SOMMAIRE
+  ══════════════════════════════════════ */
+  #slide-2 { background: var(--off); }
+.sommaire-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-width: 780px;
+}
+  .som-card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px 16px;
+    text-align: center;
+    border: 1px solid var(--gray);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .som-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--orange));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  .som-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(5,66,112,0.1); }
+  .som-card:hover::before { transform: scaleX(1); }
+.som-num {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--blue);
+  margin-bottom: 6px;
+  font-family: 'Outfit';
+  opacity: 0.85;
+}
+.som-card:nth-child(even) .som-num { color: var(--orange); }  .som-card:nth-child(even) .som-num { color: var(--orange); }
+  .som-icon { font-size: 22px; margin-bottom: 6px; }
+  .som-label { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.4; }
+
+  /* ══════════════════════════════════════
+     SLIDES 3–12 – shared card styles
+  ══════════════════════════════════════ */
+  #slide-3 { background: white; }
+  #slide-4 { background: var(--off); }
+  #slide-5 { background: var(--blue); }
+  #slide-6 { background: var(--off); }
+  #slide-7 { background: white; }
+  #slide-8 { background: var(--off); }
+  #slide-9 { background: white; }
+  #slide-10 { background: var(--off); }
+  #slide-11 { background: white; }
+  #slide-12 { background: var(--off); }
+  #slide-13 { background: var(--blue); }
+
+  /* Slide 5 + 13 dark header */
+  #slide-5 .slide-label, #slide-13 .slide-label { color: #f9c795; }
+  #slide-5 .slide-label::before, #slide-13 .slide-label::before { background: #f9c795; }
+  #slide-5 .slide-title, #slide-13 .slide-title { color: white; }
+  #slide-5 .underline-bar, #slide-13 .underline-bar { background: linear-gradient(90deg, rgba(255,255,255,0.6), var(--orange)); }
+  #slide-5 .top-bar, #slide-13 .top-bar {
+    background: rgba(5,66,112,0.95);
+    border-color: rgba(255,255,255,0.1);
+  }
+  #slide-5 .top-bar .sofrecom-logo .sof,
+  #slide-13 .top-bar .sofrecom-logo .sof { color: white; }
+  #slide-5 .slide-counter, #slide-13 .slide-counter { color: rgba(255,255,255,0.5); }
+  #slide-5 .slide-counter span, #slide-13 .slide-counter span { color: #f9c795; }
+
+  /* SLIDE 3 – VISION */
+  .vision-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 940px;
+    width: 100%;
+    align-items: start;
+  }
+  .vision-quote {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    color: var(--blue);
+    line-height: 1.4;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .vision-body { font-size: 14px; color: var(--muted); line-height: 1.75; }
+  .vision-body strong { color: var(--text); font-weight: 600; }
+  .vision-pills { display: flex; flex-direction: column; gap: 10px; }
+  .vision-pill {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--off);
+    border-radius: 10px;
+    padding: 12px 16px;
+    border-left: 3px solid var(--blue);
+  }
+  .vision-pill:nth-child(2n) { border-left-color: var(--orange); }
+  .vision-pill-icon { font-size: 20px; }
+  .vision-pill-text { font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.4; }
+
+  /* SLIDE 4 – PROBLÈMES */
+  .prob-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 960px;
+    width: 100%;
+  }
+  .prob-card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px 20px;
+    box-shadow: 0 1px 12px rgba(5,66,112,0.06);
+    border-top: 3px solid var(--blue);
+    transition: transform 0.2s ease;
+  }
+  .prob-card:hover { transform: translateY(-3px); }
+  .prob-card.mgr { border-top-color: var(--orange); }
+  .prob-card.org { border-top-color: transparent; border-image: linear-gradient(90deg, var(--blue), var(--orange)) 1; }
+  .prob-role { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; color: var(--blue); }
+  .prob-card.mgr .prob-role { color: var(--orange); }
+  .prob-card h3 { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+  .prob-list { list-style: none; }
+  .prob-list li {
+    font-size: 12.5px; color: var(--muted);
+    padding: 5px 0 5px 16px;
+    border-bottom: 1px solid var(--gray);
+    position: relative; line-height: 1.5;
+  }
+  .prob-list li:last-child { border: none; }
+  .prob-list li::before { content: '→'; position: absolute; left: 0; color: var(--orange); font-size: 10px; top: 7px; }
+
+  /* SLIDE 5 – VALUE */
+  .value-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 960px;
+    width: 100%;
+  }
+  .value-card {
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 24px 18px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    color: white;
+  }
+  .value-card:hover { background: rgba(255,255,255,0.15); transform: translateY(-5px); }
+  .value-icon { font-size: 28px; margin-bottom: 12px; }
+  .value-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+  .value-card p { font-size: 12.5px; opacity: 0.75; line-height: 1.5; }
+  .value-promise {
+    margin-top: 28px;
+    background: rgba(243,112,28,0.18);
+    border: 1px solid rgba(243,112,28,0.45);
+    border-radius: 12px;
+    padding: 16px 28px;
+    font-size: 16px; font-weight: 700;
+    color: white;
+    text-align: center;
+    max-width: 680px;
+  }
+  .value-promise span { color: #f9c795; }
+
+  /* SLIDE 6 – RÔLES */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    max-width: 960px;
+    width: 100%;
+  }
+  .role-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px 18px;
+    text-align: center;
+    box-shadow: 0 2px 16px rgba(5,66,112,0.07);
+    transition: all 0.25s ease;
+    border-top: 3px solid transparent;
+  }
+  .role-card:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(5,66,112,0.12); }
+  .role-card:nth-child(1), .role-card:nth-child(2) { border-top-color: var(--blue); }
+  .role-card:nth-child(3) { border-top-color: var(--orange); }
+  .role-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin: 0 auto 12px;
+    background: var(--blue-light);
+  }
+  .role-card:nth-child(3) .role-avatar { background: var(--orange-light); }
+  .role-card:nth-child(4) .role-avatar { background: var(--gray); }
+  .role-name { font-size: 14px; font-weight: 800; color: var(--blue); margin-bottom: 10px; }
+  .role-tasks { list-style: none; text-align: left; }
+  .role-tasks li { font-size: 11.5px; color: var(--muted); padding: 4px 0 4px 12px; border-bottom: 1px solid var(--gray); position: relative; }
+  .role-tasks li:last-child { border: none; }
+  .role-tasks li::before { content: '•'; position: absolute; left: 0; color: var(--blue); font-size: 8px; top: 7px; }
+  .role-card:nth-child(3) .role-tasks li::before { color: var(--orange); }
+
+  /* SLIDE 7 – FEATURES */
+  .feat-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    max-width: 940px; width: 100%;
+  }
+  .feat-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--off);
+    border-radius: 12px;
+    padding: 18px 20px;
+    border: 1px solid transparent;
+    transition: all 0.25s ease;
+  }
+  .feat-item:hover { border-color: var(--blue-soft); background: white; box-shadow: 0 4px 20px rgba(5,66,112,0.08); }
+  .feat-ico {
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    background: var(--blue-light);
+  }
+  .feat-item:nth-child(even) .feat-ico { background: var(--orange-light); }
+  .feat-body h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .feat-body p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* SLIDE 8 – WORKFLOW */
+  .workflow {
+    display: flex; align-items: flex-start; gap: 0;
+    max-width: 980px; width: 100%;
+  }
+  .wf-step {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; flex: 1;
+  }
+  .wf-dot {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 3px 12px rgba(5,66,112,0.12);
+    position: relative; z-index: 1;
+    transition: all 0.25s ease;
+  }
+  .wf-dot:hover { background: var(--blue); transform: scale(1.1); }
+  .wf-num {
+    position: absolute; top: -7px; right: -7px;
+    width: 18px; height: 18px;
+    background: var(--orange); color: white;
+    border-radius: 50%; font-size: 9px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .wf-label { font-size: 11px; color: var(--text); font-weight: 600; margin-top: 8px; line-height: 1.3; max-width: 80px; }
+  .wf-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .wf-arrow {
+    flex: 0 0 20px; height: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--orange));
+    position: relative; margin-top: 24px;
+  }
+  .wf-arrow::after {
+    content: '';
+    position: absolute; right: -1px; top: -4px;
+    border: 5px solid transparent;
+    border-left-color: var(--orange);
+  }
+  .wf-result {
+    margin-top: 24px;
+    background: linear-gradient(135deg, var(--blue), #0267ad);
+    color: white; border-radius: 12px;
+    padding: 14px 28px;
+    font-size: 14px; font-weight: 700;
+    max-width: 680px;
+    text-align: center;
+  }
+
+  /* SLIDE 9 – BÉNÉFICES */
+  .benef-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    max-width: 940px; width: 100%;
+  }
+  .benef-col h3 {
+    font-size: 14px; font-weight: 700; color: var(--blue); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .benef-col.right h3 { color: var(--orange); }
+  .benef-item {
+    display: flex; gap: 10px; align-items: center;
+    padding: 10px 14px;
+    background: var(--off); border-radius: 10px;
+    margin-bottom: 8px; font-size: 12.5px; color: var(--text); font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  .benef-item:hover { background: var(--blue-light); transform: translateX(3px); }
+  .kpi-row {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  }
+  .kpi-box {
+    background: var(--off); border-radius: 12px; padding: 14px;
+    text-align: center; border: 1px solid var(--gray);
+  }
+  .kpi-num { font-size: 28px; font-weight: 900; color: var(--blue); line-height: 1; }
+  .kpi-box:nth-child(2n) .kpi-num { color: var(--orange); }
+  .kpi-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* SLIDE 10 – DIFF */
+  .diff-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px; max-width: 900px; width: 100%;
+  }
+  .diff-card {
+    background: white; border-radius: 14px;
+    padding: 22px 20px;
+    display: flex; gap: 16px; align-items: flex-start;
+    box-shadow: 0 2px 14px rgba(5,66,112,0.06);
+    border-left: 4px solid var(--blue);
+    transition: transform 0.25s ease;
+  }
+  .diff-card:nth-child(even) { border-left-color: var(--orange); }
+  .diff-card:hover { transform: translateX(4px); }
+  .diff-emo { font-size: 28px; flex-shrink: 0; }
+  .diff-body h4 { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 5px; }
+  .diff-body p { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+
+  /* SLIDE 11 – TECH */
+  .tech-wrap {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 32px;
+    max-width: 940px; width: 100%;
+  }
+  .tech-title { font-size: 14px; font-weight: 800; color: var(--blue); margin-bottom: 12px; }
+  .tech-layer {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; background: var(--off); border-radius: 9px;
+    margin-bottom: 7px;
+  }
+  .tech-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+  .tech-layer:nth-child(2n) .tech-dot { background: var(--orange); }
+  .tech-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .tech-desc { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .sec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .sec-item {
+    background: var(--off); border-radius: 10px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--text); font-weight: 500;
+  }
+
+  /* SLIDE 12 – ROADMAP */
+  .roadmap { max-width: 860px; width: 100%; position: relative; }
+  .roadmap-line {
+    position: absolute;
+    left: 29px; top: 28px; bottom: 28px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--blue), var(--orange));
+  }
+  .roadmap-item { display: flex; gap: 24px; align-items: flex-start; margin-bottom: 14px; padding-left: 8px; }
+  .rm-dot {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: white; border: 2.5px solid var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 900; color: var(--blue);
+    box-shadow: 0 3px 14px rgba(5,66,112,0.12);
+    position: relative; z-index: 1; flex-shrink: 0;
+    transition: all 0.25s ease;
+  }
+  .roadmap-item:nth-child(2n) .rm-dot { border-color: var(--orange); color: var(--orange); }
+  .roadmap-item:hover .rm-dot { background: var(--blue); color: white; }
+  .roadmap-item:nth-child(2n):hover .rm-dot { background: var(--orange); }
+  .rm-content {
+    flex: 1; background: white; border-radius: 12px;
+    padding: 14px 18px; box-shadow: 0 1px 10px rgba(5,66,112,0.06);
+  }
+  .rm-content h4 { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+  .rm-content p { font-size: 12.5px; color: var(--muted); }
+
+  /* SLIDE 13 – CONCLUSION */
+  .concl-wrap { text-align: center; z-index: 2; }
+  .concl-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.6; color: white; margin-bottom: 14px; }
+  .concl-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(34px, 5vw, 58px);
+    font-weight: 400;
+    line-height: 1.1; color: white; margin-bottom: 20px;
+  }
+  .concl-title em { color: #f9c795; font-style: italic; }
+  .concl-sub { font-size: 15px; opacity: 0.8; max-width: 500px; line-height: 1.7; margin: 0 auto 32px; color: white; }
+  .concl-stats {
+    display: flex; gap: 28px; justify-content: center; margin-bottom: 36px;
+  }
+  .c-stat { text-align: center; }
+  .c-stat-num { font-size: 34px; font-weight: 900; color: #f9c795; line-height: 1; }
+  .c-stat-label { font-size: 11px; opacity: 0.7; margin-top: 3px; color: white; }
+  .concl-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: white; color: var(--blue);
+    padding: 13px 30px; border-radius: 100px;
+    font-size: 14px; font-weight: 800;
+    cursor: pointer; border: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+  }
+  .concl-cta:hover { background: var(--orange); color: white; transform: translateY(-2px); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide.active .s1 { animation: fadeUp 0.55s ease 0.08s both; }
+  .slide.active .s2 { animation: fadeUp 0.55s ease 0.20s both; }
+  .slide.active .s3 { animation: fadeUp 0.55s ease 0.32s both; }
+  .slide.active .s4 { animation: fadeUp 0.55s ease 0.44s both; }
+  .slide.active .s5 { animation: fadeUp 0.55s ease 0.56s both; }
+</style>
+</head>
+<body>
+
+<!-- NAV BAR bottom -->
+<div id="nav-bar">
+  <button class="nav-prev-btn" id="prev-btn" onclick="navigate(-1)" disabled>&#8592;</button>
+  <div id="dots-container"></div>
+  <button class="nav-next-btn" id="next-btn" onclick="navigate(1)">&#8594;</button>
+</div>
+
+<!-- DECK -->
+<div id="deck">
+
+  <!-- ══ SLIDE 1: COVER ══ -->
+  <div class="slide active" id="slide-1">
+    <div class="cover-line-top"></div>
+    <div class="cover-deco"></div>
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+      <div class="top-right">
+        <span class="slide-counter"><span>1</span> / 11</span>
+      </div>
+    </div>
+
+    <!-- Cover content -->
+    <div class="cover-wrap">
+      <div class="cover-logo-block s1">
+        <div class="cover-logo-main">
+       
+          <div style="display:flex;flex-direction:column;gap:2px;margin-top: 80px;">
+<img 
+  src="data:image/png;base64,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"
+  alt="Sofrecom Logo"
+  style="width:250px;height:auto;"
+>        </div>
+</div>
+      </div>
+
+
+      <div class="cover-badge s2">Présentation Marketing RH</div>
+
+      <h1 class="cover-title-main s2">
+        Recrutez plus vite.<br>
+        Décidez plus <em>justement.</em>
+      </h1>
+
+      <p class="cover-sub s3">
+        Sof Smart Hire transforme votre processus de recrutement technique en un workflow data-driven, rapide et fiable.
+      </p>
+
+      <div class="cover-chips s3">
+        <div class="chip"><span class="chip-dot"></span>IA Générative</div>
+        <div class="chip"><span class="chip-dot"></span>ATS Intégré</div>
+        <div class="chip"><span class="chip-dot" style="background:var(--blue)"></span>Anti-triche</div>
+        <div class="chip"><span class="chip-dot" style="background:var(--blue)"></span>Dashboard RH</div>
+      </div>
+    </div>
+
+    <div class="cover-bottom s4" >
+     
+      <span >BEN REBAH Mouna</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 2: SOMMAIRE ══ -->
+  <div class="slide" id="slide-2">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+      <div class="slide-counter"><span>2</span> / 11</div>
+    </div>
+    <div class="slide-header s1" style="text-align:center;width:100%;margin-bottom:28px;">
+      <div class="slide-label">Navigation</div>
+      <div class="slide-title">Sommaire de la <span class="hl">présentation</span></div>
+      <div class="underline-bar" style="margin:0 auto 0;"></div>
+    </div>
+    <div class="sommaire-grid s2">
+      <div class="som-card"><div class="som-num">01</div><div class="som-icon">🎯</div><div class="som-label">Vision & Intro</div></div>
+      <div class="som-card"><div class="som-num">02</div><div class="som-icon">⚠️</div><div class="som-label">Problématiques</div></div>
+      <div class="som-card"><div class="som-num">03</div><div class="som-icon">💡</div><div class="som-label">Proposition de valeur</div></div>
+      <div class="som-card"><div class="som-num">04</div><div class="som-icon">👥</div><div class="som-label">Rôles utilisateurs</div></div>
+      <div class="som-card"><div class="som-num">05</div><div class="som-icon">⚙️</div><div class="som-label">Fonctionnalités</div></div>
+      <div class="som-card"><div class="som-num">06</div><div class="som-icon">🔄</div><div class="som-label">Workflow métier</div></div>
+      <div class="som-card"><div class="som-num">07</div><div class="som-icon">📈</div><div class="som-label">Bénéfices & KPI</div></div>
+      <div class="som-card"><div class="som-num">08</div><div class="som-icon">🏆</div><div class="som-label">Différenciateurs</div></div>
+      <!--<div class="som-card"><div class="som-num">09</div><div class="som-icon">🔧</div><div class="som-label">Déploiement & Sécu.</div></div>-->
+      <div class="som-card"><div class="som-num">09</div><div class="som-icon">✅</div><div class="som-label">Conclusion & CTA</div></div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 3: VISION ══ -->
+  <div class="slide" id="slide-3">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+      <div class="slide-counter"><span>3</span> / 11</div>
+    </div>
+    <div style="width:100%;max-width:940px;">
+      <div class="s1" style="margin-bottom:20px;">
+        <div class="slide-label">01 – Vision produit</div>
+        <div class="slide-title">Pourquoi <span class="hl">Sof Smart Hire</span> ?</div>
+        <div class="underline-bar"></div>
+      </div>
+      <div class="vision-wrap s2">
+        <div class="vision-left">
+          <div class="vision-quote">"Le bon candidat, plus vite, avec des preuves mesurables."</div>
+          <div class="vision-body">
+            Sof Smart Hire est une plateforme de recrutement intelligent qui combine un <strong>ATS orienté CV</strong>, une <strong>évaluation technique automatisée par IA</strong> et une orchestration RH/Manager sur un même workflow unifié.<br><br>
+            Objectif business : <strong style="color:var(--blue)">recruter plus vite</strong>, mieux qualifier les candidats, et <strong style="color:var(--orange)">améliorer la qualité des embauches</strong>.
+          </div>
+        </div>
+        <div class="vision-pills">
+          <div class="vision-pill"><div class="vision-pill-icon">📄</div><div class="vision-pill-text"><strong>ATS intégré</strong> – Gestion centralisée des CV et offres</div></div>
+          <div class="vision-pill"><div class="vision-pill-icon">🤖</div><div class="vision-pill-text"><strong>IA d'évaluation</strong> – Quiz personnalisés générés automatiquement</div></div>
+          <div class="vision-pill"><div class="vision-pill-icon">🔗</div><div class="vision-pill-text"><strong>Workflow unifié</strong> – RH et Manager sur la même plateforme</div></div>
+          <div class="vision-pill"><div class="vision-pill-icon">📊</div><div class="vision-pill-text"><strong>Data-driven</strong> – Décisions appuyées sur des données objectives</div></div>
+          <div class="vision-pill"><div class="vision-pill-icon">🛡️</div><div class="vision-pill-text"><strong>Sécurisé</strong> – Anti-triche, liens uniques, traçabilité complète</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 4: PROBLÈMES ══ -->
+  <div class="slide" id="slide-4">
+    <div class="top-bar">
+            <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+      ><div class="slide-counter"><span>4</span> / 11</div></div>
+    <div class="s1" style="text-align:center;margin-bottom:20px;"><div class="slide-label">02 – Contexte marché</div><div class="slide-title">Les problèmes <span class="hl">que vous vivez</span> au quotidien</div><div class="underline-bar" style="margin:0 auto;"></div></div>
+    <div class="prob-grid s2">
+      <div class="prob-card rh"><div class="prob-role">Côté RH</div><h3>🗂️ La surcharge manuelle</h3><ul class="prob-list"><li>Trop de CV à trier manuellement</li><li>Comparaison objective impossible</li><li>Mauvaise visibilité sur les candidatures</li><li>Délais longs entre CV et décision</li></ul></div>
+      <div class="prob-card mgr"><div class="prob-role" style="color:var(--orange)">Côté Manager</div><h3>⏱️ L'évaluation chronophage</h3><ul class="prob-list"><li>Entretiens techniques très lourds</li><li>Niveaux candidats hétérogènes</li><li>Questions répétitives, risque de fuite</li><li>Compétences CV difficiles à vérifier</li></ul></div>
+      <div class="prob-card org"><div class="prob-role">Côté Organisation</div><h3>🔀 La fragmentation du process</h3><ul class="prob-list"><li>Silos entre RH et technique</li><li>Décisions parfois subjectives</li><li>Manque de traçabilité</li><li>Aucun indicateur consolidé</li></ul></div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 5: VALEUR ══ -->
+  <div class="slide" id="slide-5">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div> 
+           <div class="slide-counter"><span>5</span> / 11</div></div>
+    <div class="s1" style="text-align:center;margin-bottom:20px;"><div class="slide-label">03 – Notre réponse</div><div class="slide-title">Notre <span style="color:#f9c795">proposition de valeur</span></div><div class="underline-bar" style="margin:0 auto;"></div></div>
+    <div class="value-grid s2">
+      <div class="value-card"><div class="value-icon">⚡</div><h3>Plus Rapide</h3><p>Automatisation du tri, génération de quiz, envois automatiques dès le profil reçu</p></div>
+      <div class="value-card"><div class="value-icon">🎯</div><h3>Plus Fiable</h3><p>Évaluation structurée, contrôle anti-triche, résultats traçables et reproductibles</p></div>
+      <div class="value-card"><div class="value-icon">⚖️</div><h3>Plus Juste</h3><p>Quiz personnalisés selon le poste, la séniorité et le profil individuel du candidat</p></div>
+      <div class="value-card"><div class="value-icon">📊</div><h3>Plus Pilotable</h3><p>Tableau de bord, statuts en temps réel, résultats et historique complet</p></div>
+    </div>
+    <div class="value-promise s3">"Le bon candidat, plus vite, avec des <span>preuves mesurables</span>"</div>
+  </div>
+
+  <!-- ══ SLIDE 6: RÔLES ══ -->
+  <div class="slide" id="slide-6">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+            <div class="slide-counter"><span>6</span> / 11</div></div>
+    <div class="s1" style="text-align:center;margin-bottom:20px;"><div class="slide-label">04 – Utilisateurs</div><div class="slide-title">Qui utilise <span class="hl">Sof Smart Hire</span> ?</div><div class="underline-bar" style="margin:0 auto;"></div></div>
+    <div class="roles-grid s2">
+      <div class="role-card"><div class="role-avatar">👑</div><div class="role-name">RH Admin</div><ul class="role-tasks"><li>Administration globale</li><li>Gestion utilisateurs & départements</li><li>Supervision transverse</li><li>Gouvernance du process</li></ul></div>
+      <div class="role-card"><div class="role-avatar">👩‍💼</div><div class="role-name">RH</div><ul class="role-tasks"><li>Import et gestion des CV</li><li>Association candidats / offres</li><li>Lancement des évaluations</li><li>Coordination avec managers</li></ul></div>
+      <div class="role-card"><div class="role-avatar">🧑‍💻</div><div class="role-name">Manager</div><ul class="role-tasks"><li>Création d'offres d'emploi</li><li>Définition des templates quiz</li><li>Validation technique</li><li>Décision finale objective</li></ul></div>
+      <div class="role-card"><div class="role-avatar">🙋</div><div class="role-name">Candidat</div><ul class="role-tasks"><li>Réception invitation email</li><li>Accès via lien sécurisé unique</li><li>Passage du quiz guidé</li><li>Expérience claire et cadrée</li></ul></div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 7: FONCTIONNALITÉS ══ -->
+  <div class="slide" id="slide-7">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+            <div class="slide-counter"><span>7</span> / 11</div></div>
+    <div class="s1" style="text-align:center;margin-bottom:20px;"><div class="slide-label">05 – Fonctionnalités</div><div class="slide-title">Ce que la plateforme <span class="hl">fait pour vous</span></div><div class="underline-bar" style="margin:0 auto;"></div></div>
+    <div class="feat-wrap s2">
+      <div class="feat-item"><div class="feat-ico">📁</div><div class="feat-body"><h4>Gestion CV & Candidats</h4><p>Import, centralisation, profil enrichi, liaison candidat-offre et suivi de statuts en temps réel</p></div></div>
+      <div class="feat-item"><div class="feat-ico">📝</div><div class="feat-body"><h4>Gestion des Offres</h4><p>Création, publication, paramétrage des besoins techniques, alignement offre-quiz-candidat</p></div></div>
+      <div class="feat-item"><div class="feat-ico">🤖</div><div class="feat-body"><h4>Quiz IA Personnalisés</h4><p>Templates par poste, génération intelligente à l'envoi selon séniorité et profil candidat</p></div></div>
+      <div class="feat-item"><div class="feat-ico">🔀</div><div class="feat-body"><h4>Variation Anti-fuite</h4><p>Questions différentes par candidat via IA — offre + technologies + séniorité en input</p></div></div>
+      <div class="feat-item"><div class="feat-ico">📨</div><div class="feat-body"><h4>Invitations Sécurisées</h4><p>Lien unique par candidat, gestion des renvois, retours métier clairs (400/404/409)</p></div></div>
+      <div class="feat-item"><div class="feat-ico">🛡️</div><div class="feat-body"><h4>Anti-triche & Contrôle</h4><p>Tentative unique, surveillance comportementale, traçabilité complète de chaque tentative</p></div></div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 8: WORKFLOW ══ -->
+  <div class="slide" id="slide-8">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+            <div class="slide-counter"><span>8</span> / 11</div></div>
+    <div class="s1" style="text-align:center;margin-bottom:16px;"><div class="slide-label">06 – Scénario métier</div><div class="slide-title">Workflow <span class="hl">"Créer, Générer, Envoyer"</span></div><div class="underline-bar" style="margin:0 auto;"></div><div class="slide-desc">Du CV reçu à la décision argumentée, en quelques étapes automatisées</div></div>
+    <div class="workflow s2">
+      <div class="wf-step"><div class="wf-dot">📋<div class="wf-num">1</div></div><div class="wf-label">Créer l'offre</div><div class="wf-sub">RH / Manager</div></div>
+      <div class="wf-arrow"></div>
+      <div class="wf-step"><div class="wf-dot">🧩<div class="wf-num">2</div></div><div class="wf-label">Template quiz</div><div class="wf-sub">Manager</div></div>
+      <div class="wf-arrow"></div>
+      <div class="wf-step"><div class="wf-dot">✅<div class="wf-num">3</div></div><div class="wf-label">Publier le template</div><div class="wf-sub">Manager</div></div>
+      <div class="wf-arrow"></div>
+      <div class="wf-step"><div class="wf-dot">🔗<div class="wf-num">4</div></div><div class="wf-label">Associer candidat</div><div class="wf-sub">RH</div></div>
+      <div class="wf-arrow"></div>
+      <div class="wf-step"><div class="wf-dot">🤖<div class="wf-num">5</div></div><div class="wf-label">Générer quiz IA</div><div class="wf-sub">Auto</div></div>
+      <div class="wf-arrow"></div>
+      <div class="wf-step"><div class="wf-dot">📧<div class="wf-num">6</div></div><div class="wf-label">Envoyer invitation</div><div class="wf-sub">Auto</div></div>
+      <div class="wf-arrow"></div>
+      <div class="wf-step"><div class="wf-dot">✍️<div class="wf-num">7</div></div><div class="wf-label">Candidat passe quiz</div><div class="wf-sub">Candidat</div></div>
+      <div class="wf-arrow"></div>
+      <div class="wf-step"><div class="wf-dot">🏆<div class="wf-num">8</div></div><div class="wf-label">Décision éclairée</div><div class="wf-sub">RH + Manager</div></div>
+    </div>
+    <div class="wf-result s3">🚀 Ce flux réduit fortement le délai entre "CV reçu" et "décision argumentée"</div>
+  </div>
+
+  <!-- ══ SLIDE 9: BÉNÉFICES ══ -->
+  <div class="slide" id="slide-9">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+            <div class="slide-counter"><span>9</span> / 11</div></div>
+    <div class="s1" style="text-align:center;margin-bottom:20px;"><div class="slide-label">07 – Impact business</div><div class="slide-title">Bénéfices concrets & <span class="hl">indicateurs clés</span></div><div class="underline-bar" style="margin:0 auto;"></div></div>
+    <div class="benef-wrap s2">
+      <div class="benef-col left">
+        <h3>📈 Gains opérationnels</h3>
+        <div class="benef-item">⚡ Réduction du temps de présélection</div>
+        <div class="benef-item">🤝 Meilleure fluidité RH ↔ Manager</div>
+        <div class="benef-item">🔄 Moins de tâches répétitives RH</div>
+        <div class="benef-item">📊 Évaluation précise des compétences</div>
+        <div class="benef-item">🎯 Moins de biais subjectifs</div>
+      </div>
+      <div class="benef-col right">
+        <h3>🛡️ Réduction des risques</h3>
+        <div class="benef-item" style="background:var(--off)">✅ Moins d'erreurs de casting</div>
+        <div class="benef-item" style="background:var(--off)">📋 Standardisation des évaluations</div>
+        <div class="benef-item" style="background:var(--off)">🔍 Traçabilité utile en audit RH</div>
+        <div class="benef-item" style="background:var(--off)">😊 Meilleure expérience candidat</div>
+        <div class="benef-item" style="background:var(--off)">🏆 Meilleure adéquation poste/profil</div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-box"><div class="kpi-num">↓70%</div><div class="kpi-label">Temps de présélection manuelle</div></div>
+        <div class="kpi-box"><div class="kpi-num">3×</div><div class="kpi-label">Plus rapide de CV à décision</div></div>
+        <div class="kpi-box"><div class="kpi-num">↑85%</div><div class="kpi-label">Taux de complétion des quiz</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 10: DIFF ══ -->
+  <div class="slide" id="slide-10">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+            <div class="slide-counter"><span>10</span> / 11</div></div>
+    <div class="s1" style="text-align:center;margin-bottom:20px;"><div class="slide-label">08 – Avantages concurrentiels</div><div class="slide-title">Pourquoi <span class="hl">nous</span> plutôt qu'une autre solution ?</div><div class="underline-bar" style="margin:0 auto;"></div></div>
+    <div class="diff-grid s2">
+      <div class="diff-card"><div class="diff-emo">🎯</div><div class="diff-body"><h4>Quiz 100% personnalisés</h4><p>Chaque candidat reçoit un quiz unique généré selon son offre, ses technologies maîtrisées et sa séniorité — pas un test générique pour tous.</p></div></div>
+      <div class="diff-card"><div class="diff-emo">🏗️</div><div class="diff-body"><h4>Modèle Template + Génération</h4><p>Le manager définit la structure une fois (template), l'IA génère un quiz différent à chaque envoi. Gain de temps + anti-fuite intégré.</p></div></div>
+      <div class="diff-card"><div class="diff-emo">🤝</div><div class="diff-body"><h4>Orientation métier RH/Manager</h4><p>Pas un simple outil de tests techniques — une plateforme métier complète qui gère le workflow de bout en bout pour les deux équipes.</p></div></div>
+      <div class="diff-card"><div class="diff-emo">🔄</div><div class="diff-body"><h4>Workflow candidature → décision</h4><p>Du CV importé à la décision argumentée, tout est dans une seule plateforme. Fini les outils fragmentés et les silos d'information.</p></div></div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 11: TECH ══ 
+  <div class="slide" id="slide-11">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+            <div class="slide-counter"><span>11</span> / 11</div></div>
+    <div class="s1" style="text-align:center;margin-bottom:20px;"><div class="slide-label">09 – Architecture & Sécurité</div><div class="slide-title">Déploiement <span class="hl">flexible</span> et <span style="color:var(--orange)">sécurisé</span></div><div class="underline-bar" style="margin:0 auto;"></div></div>
+    <div class="tech-wrap s2">
+      <div>
+        <div class="tech-title">🏗️ Stack Technique</div>
+        <div class="tech-layer"><div class="tech-dot"></div><div class="tech-name">Frontend Angular</div><div class="tech-desc">Interface utilisateur</div></div>
+        <div class="tech-layer"><div class="tech-dot"></div><div class="tech-name">Backend Spring Boot</div><div class="tech-desc">Orchestration métier</div></div>
+        <div class="tech-layer"><div class="tech-dot"></div><div class="tech-name">IA FastAPI</div><div class="tech-desc">Analyse & génération</div></div>
+        <div class="tech-layer"><div class="tech-dot"></div><div class="tech-name">Base Relationnelle</div><div class="tech-desc">Données sécurisées</div></div>
+        <div class="tech-layer"><div class="tech-dot"></div><div class="tech-name">SMTP Email</div><div class="tech-desc">Invitations automatiques</div></div>
+        <br>
+        <div class="tech-title" style="color:var(--orange)">☁️ Options de déploiement</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="background:var(--blue-light);color:var(--blue);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;">On-premise</span>
+          <span style="background:var(--orange-light);color:var(--orange);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;">Cloud privé</span>
+          <span style="background:var(--gray);color:var(--text);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;">Cloud public</span>
+        </div>
+      </div>
+      <div>
+        <div class="tech-title">🔒 Sécurité & Gouvernance</div>
+        <div class="sec-grid">
+          <div class="sec-item"><span>🔑</span>Auth JWT</div>
+          <div class="sec-item"><span>👥</span>Gestion des rôles</div>
+          <div class="sec-item"><span>🛡️</span>Contrôle endpoints</div>
+          <div class="sec-item"><span>📝</span>Journalisation</div>
+          <div class="sec-item"><span>🔗</span>Liens sécurisés</div>
+          <div class="sec-item"><span>🚨</span>Erreurs métier</div>
+        </div>
+      </div>
+    </div>
+  </div>
+-->
+
+  <!-- ══ SLIDE 13: CONCLUSION ══ -->
+  <div class="slide" id="slide-13">
+    <div class="top-bar">
+      <div class="sofrecom-logo">
+        <div class="logo-wordmark">
+          <span class="sof">Sof   <span class="sof" style="color: #f3701c;">Smart Hire</span></span>
+        
+        </div>
+      </div>
+            <div class="slide-counter"><span>11</span> / 11</div></div>
+    <div class="concl-wrap s1">
+      <div class="concl-eyebrow">Conclusion</div>
+      <div class="concl-title">Recrutez plus vite.<br>Décidez plus <em>intelligemment.</em></div>
+      <p class="concl-sub">Sof Smart Hire transforme votre pipeline de recrutement en un avantage compétitif réel. Moins de temps perdu, plus de qualité, meilleure expérience pour vos candidats.</p>
+      <div class="concl-stats s2">
+        <div class="c-stat"><div class="c-stat-num">↓70%</div><div class="c-stat-label">Tri manuel</div></div>
+        <div class="c-stat"><div class="c-stat-num">3×</div><div class="c-stat-label">Plus rapide</div></div>
+        <div class="c-stat"><div class="c-stat-num">100%</div><div class="c-stat-label">Objectif</div></div>
+        <div class="c-stat"><div class="c-stat-num">0</div><div class="c-stat-label">Fuite de réponses</div></div>
+      </div>
+      <button class="concl-cta s3" onclick="goTo(0)">🔁 Revoir la présentation</button>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  // Build numbered dots
+  const dotsContainer = document.getElementById('dots-container');
+  const slideLabels = ['Accueil','Sommaire','Vision','Problèmes','Valeur','Rôles','Fonctions','Workflow','Bénéfices','Différenc.','Tech','Roadmap','Conclusion'];
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    d.title = slideLabels[i] || ('Slide ' + (i+1));
+    d.innerHTML = `<div class="dot-num">${i+1}</div><div class="dot-pip"></div>`;
+    d.onclick = () => goTo(i);
+    dotsContainer.appendChild(d);
+  }
+
+  function updateUI() {
+    document.getElementById('prev-btn').disabled = current === 0;
+    document.getElementById('next-btn').disabled = current === total - 1;
+    document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  function goTo(idx) {
+    if (idx === current || idx < 0 || idx >= total) return;
+    const dir = idx > current ? 1 : -1;
+    const prev = current;
+    slides[prev].classList.remove('active');
+    slides[prev].classList.add(dir > 0 ? 'exit-left' : 'exit-right');
+    setTimeout(() => slides[prev].classList.remove('exit-left', 'exit-right'), 560);
+    current = idx;
+    slides[current].classList.add('active');
+    updateUI();
+    // scroll dot into view
+    document.querySelectorAll('.nav-dot')[current]?.scrollIntoView({block:'nearest',inline:'center'});
+  }
+
+  function navigate(delta) { goTo(current + delta); }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1);
+    if (e.key === 'Home') goTo(0);
+    if (e.key === 'End') goTo(total - 1);
+  });
+
+  // Touch/swipe support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 60) navigate(dx < 0 ? 1 : -1);
+  });
+
+  updateUI();
+</script>
+</body>
+</html>
